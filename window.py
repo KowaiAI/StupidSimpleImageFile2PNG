@@ -152,7 +152,7 @@ class MainWindow(Adw.ApplicationWindow):
         dialog.open_multiple(self, None, self._on_images_selected)
 
     def _on_images_selected(self, dialog, result):
-        """Handle image selection result."""
+        """Handle the result of image selection."""
         try:
             files = dialog.open_multiple_finish(result)
             if files:
@@ -211,7 +211,7 @@ class MainWindow(Adw.ApplicationWindow):
         dialog.select_folder(self, None, self._on_output_selected)
 
     def _on_output_selected(self, dialog, result):
-        """Handle output folder selection result."""
+        """Handle the result of the output folder selection."""
         try:
             folder = dialog.select_folder_finish(result)
             if folder:
@@ -222,7 +222,7 @@ class MainWindow(Adw.ApplicationWindow):
             pass
 
     def _on_convert(self, button):
-        """Start the conversion process."""
+        """Start the conversion process if files are selected and not already converting."""
         if not self.selected_files or self.is_converting:
             return
 
@@ -242,6 +242,7 @@ class MainWindow(Adw.ApplicationWindow):
     def _convert_thread(self, files, output_folder):
         """Background thread for conversion."""
         def progress_callback(current, total, filename):
+            """Updates the progress using the provided current, total, and filename."""
             GLib.idle_add(self._update_progress, current, total, filename)
 
         successful, failed = batch_convert(files, output_folder, progress_callback)
@@ -249,7 +250,7 @@ class MainWindow(Adw.ApplicationWindow):
         GLib.idle_add(self._conversion_complete, successful, failed)
 
     def _update_progress(self, current, total, filename):
-        """Update progress bar from main thread."""
+        """Update the progress bar with the current progress."""
         if total > 0:
             fraction = current / total
             self.progress_bar.set_fraction(fraction)
@@ -258,7 +259,7 @@ class MainWindow(Adw.ApplicationWindow):
         return False  # Remove idle callback
 
     def _conversion_complete(self, successful, failed):
-        """Handle conversion completion."""
+        """Handle the completion of the conversion process."""
         self.is_converting = False
         self.convert_button.set_sensitive(len(self.selected_files) > 0)
         self.progress_bar.set_fraction(1.0)
@@ -286,7 +287,7 @@ class MainWindow(Adw.ApplicationWindow):
         dialog.choose(self, None, None)
 
     def _show_result_dialog(self, successful, failed):
-        """Show result dialog with failures."""
+        """Show a dialog displaying the conversion results."""
         dialog = Adw.AlertDialog()
         dialog.set_heading("Conversion Complete")
 
