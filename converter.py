@@ -9,10 +9,7 @@ SUPPORTED_FORMATS = {'.jpg', '.jpeg', '.webp', '.gif', '.bmp', '.tiff', '.tif', 
 
 
 def strip_metadata(image: Image.Image) -> Image.Image:
-    """Remove all metadata from a PIL Image.
-
-    Creates a new image with only pixel data, stripping EXIF, XMP, IPTC, etc.
-    """
+    """Remove all metadata from a PIL Image."""
     data = list(image.getdata())
 
     if image.mode == 'RGBA':
@@ -35,18 +32,18 @@ def strip_metadata(image: Image.Image) -> Image.Image:
 
 
 def convert_to_png(input_path: Path, output_folder: Path) -> Path:
-    """Convert a single image to PNG format with metadata stripped.
-
+    """Convert an image to PNG format with metadata stripped.
+    
     Args:
-        input_path: Path to the source image
-        output_folder: Directory where the PNG will be saved
-
+        input_path: Path to the source image.
+        output_folder: Directory where the PNG will be saved.
+    
     Returns:
-        Path to the converted PNG file
-
+        Path to the converted PNG file.
+    
     Raises:
-        ValueError: If the file format is not supported
-        IOError: If the file cannot be read or written
+        ValueError: If the file format is not supported.
+        IOError: If the file cannot be read or written.
     """
     input_path = Path(input_path)
     output_folder = Path(output_folder)
@@ -81,14 +78,18 @@ def batch_convert(
     progress_callback: Optional[Callable[[int, int, str], None]] = None
 ) -> tuple[list[Path], list[tuple[Path, str]]]:
     """Convert multiple images to PNG format.
-
+    
+    This function takes a list of image file paths and converts each image to PNG
+    format,  saving the results in a specified output directory. It also provides
+    optional progress  updates through a callback function. The function tracks
+    successful conversions and  any failures, returning a tuple containing the
+    paths of successfully converted images  and a list of failed items with their
+    corresponding error messages.
+    
     Args:
-        file_list: List of paths to source images
-        output_folder: Directory where PNGs will be saved
-        progress_callback: Optional callback(current, total, filename) for progress updates
-
-    Returns:
-        Tuple of (successful_paths, failed_items) where failed_items is list of (path, error_message)
+        file_list: List of paths to source images.
+        output_folder: Directory where PNGs will be saved.
+        progress_callback: Optional callback(current, total, filename) for progress updates.
     """
     successful = []
     failed = []
