@@ -1,0 +1,44 @@
+app-id: io.github.bulkimageconverter
+runtime: org.gnome.Platform
+runtime-version: '47'
+sdk: org.gnome.Sdk
+command: bulk-image-converter
+
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  # Access home directory for reading images and writing output
+  - --filesystem=home
+
+modules:
+  - name: python3-pillow
+    buildsystem: simple
+    build-commands:
+      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}"
+        --prefix=${FLATPAK_DEST} "." --no-build-isolation
+    sources:
+      - type: archive
+        url: https://files.pythonhosted.org/packages/cd/74/ad3d526f3bf7b6d3f408b73fde271ec69dfac8b81341571c1ea8a2a98559/pillow-11.0.0.tar.gz
+        sha256: 72bacbaf24ac003fea9bff9837d1eedb6088758d41e100c1552930151f677f72
+
+  - name: bulk-image-converter
+    buildsystem: simple
+    build-commands:
+      - install -D main.py ${FLATPAK_DEST}/share/bulk-image-converter/main.py
+      - install -D window.py ${FLATPAK_DEST}/share/bulk-image-converter/window.py
+      - install -D converter.py ${FLATPAK_DEST}/share/bulk-image-converter/converter.py
+      - install -D io.github.bulkimageconverter.desktop ${FLATPAK_DEST}/share/applications/io.github.bulkimageconverter.desktop
+      - install -D io.github.bulkimageconverter.metainfo.xml ${FLATPAK_DEST}/share/metainfo/io.github.bulkimageconverter.metainfo.xml
+      - install -D data/icons/hicolor/scalable/apps/io.github.bulkimageconverter.svg ${FLATPAK_DEST}/share/icons/hicolor/scalable/apps/io.github.bulkimageconverter.svg
+      - |
+        cat > ${FLATPAK_DEST}/bin/bulk-image-converter << 'EOF'
+        #!/bin/bash
+        cd /app/share/bulk-image-converter
+        exec python3 main.py "$@"
+        EOF
+      - chmod +x ${FLATPAK_DEST}/bin/bulk-image-converter
+    sources:
+      - type: dir
+        path: .

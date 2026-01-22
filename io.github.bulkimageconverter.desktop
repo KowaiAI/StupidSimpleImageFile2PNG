@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Bulk Image Converter
+Comment=Convert images to PNG and strip metadata
+Exec=bulk-image-converter
+Icon=io.github.bulkimageconverter
+Terminal=false
+Type=Application
+Categories=Graphics;Utility;GTK;
+Keywords=image;convert;png;metadata;exif;privacy;
+StartupNotify=true
